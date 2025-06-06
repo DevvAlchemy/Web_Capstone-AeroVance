@@ -24,7 +24,7 @@ This capstone project showcases a full-stack ecommerce solution built with PHP b
 - **React.js** - User interface framework
 - **JavaScript ES6+** - Client-side scripting
 - **CSS3/SCSS** - Styling with orange theme
-- **Bootstrap/Tailwind** - Responsive design framework
+- **Bootstrap/Tailwind** - Responsive design framework (if time permits)
 
 ## 📁 Project Structure
 
