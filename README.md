@@ -180,7 +180,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 👨‍💻 Developer
 
-**Your Name**
+**Carlito Kabambi**
 - GitHub: [@DevvAlchemy](https://github.com/devvalchemy)
 - Email: carlito.kabambi@triosstudent.com
 
