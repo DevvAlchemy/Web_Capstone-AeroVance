@@ -1,6 +1,5 @@
 <?php
 /**
- * Main Entry Point for Helicopter Marketplace
  * Handles routing and static file serving
  */
 
@@ -120,6 +119,20 @@ class Router {
     private function handleNotFound() {
         http_response_code(404);
         echo "Page not found";
+    }
+}
+// put in a better place / change to do
+class Helicopter {
+    private $conn;
+
+    public function __construct($db) {
+        $this->conn = $db;
+    }
+    public function getFeatured() {
+        $query = "SELECT * FROM helicopters WHERE featured = 1";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
 
@@ -261,6 +274,48 @@ $router->post('/login', function() {
     }
 });
 
+$router->get('/', function() {
+    include '../views/home.php';
+});
+
+// CATALOG PAGE ROUTE (this is what you need!)
+$router->get('/helicopters', function() {
+    include '../views/catalog.php';
+});
+
+$router->get('/helicopter/{id}', function($id) {
+    // For now, just include a basic helicopter detail page
+    // We'll create this next
+    include '../views/helicopter-detail.php';
+});
+
+$router->get('/category/{category}', function($category) { 
+    include '../views/catalog.php';
+});
+
+$router->post('/search', function() {
+    // Handle search - redirect to catalog with search params
+    $search = $_POST['search'] ?? '';
+    header('Location: /helicopters?search=' . urlencode($search));
+    exit;
+});
+
+$router->get('/about', function() {
+    include '../views/about.php';
+});
+
+$router->get('/contact', function() {
+    include '../views/contact.php';
+});
+
+$router->get('/login', function() {
+    if (isLoggedIn()) {
+        header('Location: /dashboard');
+        exit;
+    }
+    include '../views/auth/login.php';
+});
+
 $router->get('/register', function() {
     if (isLoggedIn()) {
         header('Location: /dashboard');
@@ -270,23 +325,23 @@ $router->get('/register', function() {
 });
 
 $router->get('/logout', function() {
+    session_unset();
     session_destroy();
     header('Location: /');
     exit;
 });
 
-$router->get('/dashboard', function() {
-    requireLogin();
-    include '../views/dashboard.php';
-});
-
-// API routes
+// API routes for future use
 $router->get('/api/helicopters', function() {
     header('Content-Type: application/json');
     
     try {
-        $controller = new HelicopterController();
-        $helicopters = $controller->getFeatured();
+        require_once '../models/Helicopter.php';
+        $database = new Database();
+        $db = $database->connect();
+        $helicopter = new Helicopter($db);
+        
+        $helicopters = $helicopter->getFeatured();
         echo json_encode(['data' => $helicopters]);
     } catch (Exception $e) {
         echo json_encode(['data' => [], 'error' => 'Unable to load helicopters']);
