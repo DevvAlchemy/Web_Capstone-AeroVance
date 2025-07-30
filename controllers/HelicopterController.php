@@ -48,7 +48,7 @@ class HelicopterController {
         try {
             $helicopters = $this->helicopter->getAllHelicopters($limit, $offset, $filters);
             $manufacturers = $this->helicopter->getManufacturers();
-            $categoryStats = $this->helicopter->getCountByCategory();
+            $categoryStats = $this->helicopter->getCountByCategory($filters);
             
             $data = [
                 'helicopters' => $helicopters,
@@ -108,7 +108,7 @@ class HelicopterController {
         
         try {
             $helicopters = $this->helicopter->getHelicoptersByCategory($category, 20);
-            $categoryStats = $this->helicopter->getCountByCategory();
+            $categoryStats = $this->helicopter->getCountByCategory(['category' => $category]);
             
             $data = [
                 'helicopters' => $helicopters,

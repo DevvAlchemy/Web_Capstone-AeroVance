@@ -348,7 +348,6 @@ try {
                     </ul>
                 </div>
                 
-                
              <div class="footer-section">
                 <h4>Connect</h4>
                 <p>Follow us for aviation updates</p>

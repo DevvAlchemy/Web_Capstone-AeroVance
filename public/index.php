@@ -178,12 +178,22 @@ $router->get('/contact', function() {
 $router->post('/contact', function() {
     // Handle contact form submission
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        session_start();
+        // CSRF protection
+        if (
+            !isset($_POST['csrf_token'], $_SESSION['csrf_token']) ||
+            !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])
+        ) {
+            http_response_code(403);
+            echo 'Invalid CSRF token. Please reload the form and try again.';
+            exit;
+        }
         // Process contact form
         $name = sanitizeInput($_POST['name'] ?? '');
         $email = sanitizeInput($_POST['email'] ?? '');
         $subject = sanitizeInput($_POST['subject'] ?? '');
         $message = sanitizeInput($_POST['message'] ?? '');
-        
+
         // Basic validation
         $errors = [];
         if (empty($name)) $errors[] = 'Name is required';
@@ -191,7 +201,7 @@ $router->post('/contact', function() {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Valid email is required';
         if (empty($subject)) $errors[] = 'Subject is required';
         if (empty($message)) $errors[] = 'Message is required';
-        
+
         if (empty($errors)) {
             // Save inquiry to database (if database is set up)
             try {
@@ -294,9 +304,9 @@ $router->get('/category/{category}', function($category) {
 });
 
 $router->post('/search', function() {
-    // Handle search - redirect to catalog with search params
-    $search = $_POST['search'] ?? '';
-    header('Location: /helicopters?search=' . urlencode($search));
+    // Handle search - redirect to catalog with all POST params as query string
+    $query = http_build_query($_POST);
+    header('Location: /helicopters' . ($query ? ('?' . $query) : ''));
     exit;
 });
 
@@ -348,6 +358,287 @@ $router->get('/api/helicopters', function() {
     }
 });
 
+// Add these routes to your index.php file after the existing routes
+
+// Shopping Cart routes
+$router->get('/cart', function() {
+    if (!isLoggedIn()) {
+        header('Location: /login?redirect=/cart');
+        exit;
+    }
+    include '../views/cart.php';
+});
+
+// Checkout routes
+$router->get('/checkout', function() {
+    if (!isLoggedIn()) {
+        header('Location: /login?redirect=/checkout');
+        exit;
+    }
+    include '../views/checkout.php';
+});
+
+// Account/Dashboard routes
+$router->get('/account', function() {
+    if (!isLoggedIn()) {
+        header('Location: /login');
+        exit;
+    }
+    include '../views/account/dashboard.php';
+});
+
+$router->get('/account/orders', function() {
+    if (!isLoggedIn()) {
+        header('Location: /login');
+        exit;
+    }
+    include '../views/account/orders.php';
+});
+
+$router->get('/account/wishlist', function() {
+    if (!isLoggedIn()) {
+        header('Location: /login');
+        exit;
+    }
+    include '../views/account/wishlist.php';
+});
+
+$router->get('/account/settings', function() {
+    if (!isLoggedIn()) {
+        header('Location: /login');
+        exit;
+    }
+    include '../views/account/settings.php';
+});
+
+// API Routes for AJAX calls
+$router->post('/api/cart/add', function() {
+    header('Content-Type: application/json');
+    
+    if (!isLoggedIn()) {
+        echo json_encode(['success' => false, 'message' => 'Please login first']);
+        exit;
+    }
+    
+    try {
+        $data = json_decode(file_get_contents('php://input'), true);
+        $helicopterId = $data['helicopter_id'] ?? 0;
+        
+        if (!$helicopterId) {
+            echo json_encode(['success' => false, 'message' => 'Invalid helicopter ID']);
+            exit;
+        }
+        
+        require_once '../config/database.php';
+        require_once '../models/Cart.php';
+        
+        $database = new Database();
+        $db = $database->connect();
+        $cart = new Cart($db);
+        
+        $result = $cart->addToCart($_SESSION['user']['id'], $helicopterId);
+        $cartCount = $cart->getCartCount($_SESSION['user']['id']);
+        
+        echo json_encode([
+            'success' => $result,
+            'cart_count' => $cartCount,
+            'message' => $result ? 'Added to cart successfully!' : 'Error adding to cart'
+        ]);
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'message' => 'Server error']);
+    }
+});
+
+$router->post('/api/cart/update', function() {
+    header('Content-Type: application/json');
+    
+    if (!isLoggedIn()) {
+        echo json_encode(['success' => false, 'message' => 'Please login first']);
+        exit;
+    }
+    
+    try {
+        $data = json_decode(file_get_contents('php://input'), true);
+        $cartId = $data['cart_id'] ?? 0;
+        $quantity = $data['quantity'] ?? 1;
+        
+        require_once '../config/database.php';
+        require_once '../models/Cart.php';
+        
+        $database = new Database();
+        $db = $database->connect();
+        $cart = new Cart($db);
+        
+        $result = $cart->updateQuantity($cartId, $_SESSION['user']['id'], $quantity);
+        $totals = $cart->getCartTotals($_SESSION['user']['id']);
+        
+        echo json_encode([
+            'success' => $result,
+            'totals' => $totals,
+            'message' => $result ? 'Cart updated' : 'Error updating cart'
+        ]);
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'message' => 'Server error']);
+    }
+});
+
+$router->post('/api/cart/remove', function() {
+    header('Content-Type: application/json');
+    
+    if (!isLoggedIn()) {
+        echo json_encode(['success' => false, 'message' => 'Please login first']);
+        exit;
+    }
+    
+    try {
+        $data = json_decode(file_get_contents('php://input'), true);
+        $cartId = $data['cart_id'] ?? 0;
+        
+        require_once '../config/database.php';
+        require_once '../models/Cart.php';
+        
+        $database = new Database();
+        $db = $database->connect();
+        $cart = new Cart($db);
+        
+        $result = $cart->removeItem($cartId, $_SESSION['user']['id']);
+        $cartCount = $cart->getCartCount($_SESSION['user']['id']);
+        $totals = $cart->getCartTotals($_SESSION['user']['id']);
+        
+        echo json_encode([
+            'success' => $result,
+            'cart_count' => $cartCount,
+            'totals' => $totals,
+            'message' => $result ? 'Item removed' : 'Error removing item'
+        ]);
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'message' => 'Server error']);
+    }
+});
+
+$router->post('/api/wishlist/add', function() {
+    header('Content-Type: application/json');
+    
+    if (!isLoggedIn()) {
+        echo json_encode(['success' => false, 'message' => 'Please login first']);
+        exit;
+    }
+    
+    try {
+        $data = json_decode(file_get_contents('php://input'), true);
+        $helicopterId = $data['helicopter_id'] ?? 0;
+        
+        require_once '../config/database.php';
+        require_once '../models/Wishlist.php';
+        
+        $database = new Database();
+        $db = $database->connect();
+        $wishlist = new Wishlist($db);
+        
+        $result = $wishlist->addToWishlist($_SESSION['user']['id'], $helicopterId);
+        
+        echo json_encode([
+            'success' => $result,
+            'message' => $result ? 'Added to wishlist!' : 'Already in wishlist'
+        ]);
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'message' => 'Server error']);
+    }
+});
+
+$router->post('/api/inquiry/send', function() {
+    header('Content-Type: application/json');
+    
+    if (!isLoggedIn()) {
+        echo json_encode(['success' => false, 'message' => 'Please login first']);
+        exit;
+    }
+    
+    try {
+        $helicopterId = $_POST['helicopter_id'] ?? 0;
+        $name = sanitizeInput($_POST['name'] ?? '');
+        $email = sanitizeInput($_POST['email'] ?? '');
+        $phone = sanitizeInput($_POST['phone'] ?? '');
+        $message = sanitizeInput($_POST['message'] ?? '');
+        
+        // Validate inputs
+        if (empty($name) || empty($email) || empty($message)) {
+            echo json_encode(['success' => false, 'message' => 'Please fill all required fields']);
+            exit;
+        }
+        
+        require_once '../config/database.php';
+        
+        $database = new Database();
+        $db = $database->connect();
+        
+        $query = "INSERT INTO inquiries 
+                  (user_id, helicopter_id, name, email, phone, message, created_at)
+                  VALUES (:user_id, :helicopter_id, :name, :email, :phone, :message, NOW())";
+        
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(':user_id', $_SESSION['user']['id']);
+        $stmt->bindParam(':helicopter_id', $helicopterId);
+        $stmt->bindParam(':name', $name);
+        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':phone', $phone);
+        $stmt->bindParam(':message', $message);
+        
+        $result = $stmt->execute();
+        
+        echo json_encode([
+            'success' => $result,
+            'message' => $result ? 'Message sent successfully!' : 'Error sending message'
+        ]);
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'message' => 'Server error']);
+    }
+});
+
+$router->post('/api/newsletter/subscribe', function() {
+    header('Content-Type: application/json');
+    
+    try {
+        $data = json_decode(file_get_contents('php://input'), true);
+        $email = filter_var($data['email'] ?? '', FILTER_VALIDATE_EMAIL);
+        
+        if (!$email) {
+            echo json_encode(['success' => false, 'message' => 'Invalid email address']);
+            exit;
+        }
+        
+        require_once '../config/database.php';
+        
+        $database = new Database();
+        $db = $database->connect();
+        
+        // Check if already subscribed
+        $checkQuery = "SELECT id FROM newsletter_subscribers WHERE email = :email";
+        $stmt = $db->prepare($checkQuery);
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
+        
+        if ($stmt->fetch()) {
+            echo json_encode(['success' => false, 'message' => 'Already subscribed']);
+            exit;
+        }
+        
+        // Subscribe
+        $query = "INSERT INTO newsletter_subscribers (email, created_at) VALUES (:email, NOW())";
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(':email', $email);
+        
+        $result = $stmt->execute();
+        
+        echo json_encode([
+            'success' => $result,
+            'message' => $result ? 'Successfully subscribed!' : 'Error subscribing'
+        ]);
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'message' => 'Server error']);
+    }
+});
+
 // Run the router
 try {
     $router->run();
@@ -357,4 +648,5 @@ try {
     http_response_code(500);
     echo "Internal Server Error";
 }
+
 ?>

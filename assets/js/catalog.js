@@ -83,6 +83,7 @@
             const minPrice = document.querySelector('input[name="min_price"]');
             const maxPrice = document.querySelector('input[name="max_price"]');
 
+// sourcery skip: avoid-function-declarations-in-blocks
             function validatePriceRange() {
                 const min = parseInt(minPrice.value) || 0;
                 const max = parseInt(maxPrice.value) || Infinity;
@@ -100,7 +101,7 @@
             // Category filter quick buttons
             document.querySelectorAll('[data-category]').forEach(button => {
                 button.addEventListener('click', function() {
-                    const category = this.dataset.category;
+                    const {category} = this.dataset;
                     document.getElementById('category').value = category;
                     document.querySelector('.search-filters').submit();
                 });
@@ -113,13 +114,11 @@
             const isLoggedIn = false; // Replace with actual auth check
             
             if (isLoggedIn) {
-                window.location.href = `/contact?helicopter_id=${helicopterId}`;
-            } else {
-                // Show login prompt or redirect to login
-                if (confirm('Please login to contact the seller. Redirect to login page?')) {
-                    window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
-                }
-            }
+                            window.location.href = `/contact?helicopter_id=${helicopterId}`;
+                        }
+            else if (confirm('Please login to contact the seller. Redirect to login page?')) {
+                                window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
+                            }
         }
 
         // Advanced search functionality (React-ready pattern)
