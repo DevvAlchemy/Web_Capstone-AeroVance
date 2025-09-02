@@ -1,10 +1,10 @@
 <?php
-/**
+/*
  * User Model
  * Handles user authentication, registration, and profile management
  */
 
-require_once '../config/database.php';
+require_once __DIR__ . '/../config/config.php';
 
 class User {
     private $conn;
@@ -293,7 +293,6 @@ class User {
     }
     
     // Reset password with token
-    
     public function resetPassword($token, $newPassword) {
         $query = "SELECT id FROM " . $this->table . " 
                  WHERE reset_token = :token AND reset_token_expires > NOW()";
@@ -323,5 +322,127 @@ class User {
         
         return ['success' => false, 'message' => 'Invalid or expired reset token'];
     }
+
+// Get user's total order count (for dashboard stats)
+public function getUserOrderCount($userId) {
+    $query = "SELECT COUNT(*) as total FROM orders WHERE user_id = :user_id";
+    
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(':user_id', $userId);
+    $stmt->execute();
+    
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result['total'];
+}
+
+// Get user's pending order count (for dashboard stats)
+public function getUserPendingOrderCount($userId) {
+    $query = "SELECT COUNT(*) as total FROM orders 
+              WHERE user_id = :user_id AND status = 'pending'";
+    
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(':user_id', $userId);
+    $stmt->execute();
+    
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result['total'];
+}
+
+// Get user's total spent (for dashboard stats)
+public function getUserTotalSpent($userId) {
+    $query = "SELECT SUM(total_amount) as total FROM orders 
+              WHERE user_id = :user_id AND payment_status = 'paid'";
+    
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(':user_id', $userId);
+    $stmt->execute();
+    
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result['total'] ?? 0;
+}
+
+// Get user's wishlist count (for dashboard stats)
+public function getUserWishlistCount($userId) {
+    $query = "SELECT COUNT(*) as total FROM wishlist WHERE user_id = :user_id";
+    
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(':user_id', $userId);
+    $stmt->execute();
+    
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result['total'];
+}
+
+// Get user's inquiry count (for dashboard stats)
+public function getUserInquiryCount($userId) {
+    $query = "SELECT COUNT(*) as total FROM inquiries WHERE user_id = :user_id";
+    
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(':user_id', $userId);
+    $stmt->execute();
+    
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result['total'];
+}
+
+// Check if user is a dealer
+public function isDealer($userId) {
+    $query = "SELECT user_type FROM " . $this->table . " WHERE id = :user_id";
+    
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(':user_id', $userId);
+    $stmt->execute();
+    
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result && $result['user_type'] === 'dealer';
+}
+
+// Check if user is admin
+public function isAdmin($userId) {
+    $query = "SELECT user_type FROM " . $this->table . " WHERE id = :user_id";
+    
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindParam(':user_id', $userId);
+    $stmt->execute();
+    
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result && $result['user_type'] === 'admin';
+}
+
+// Get dealers list (for admin or public dealer directory)
+public function getDealers($limit = 50, $offset = 0) {
+    $query = "SELECT id, first_name, last_name, email, phone, company_name, 
+                     city, state, country, created_at 
+              FROM " . $this->table . " 
+              WHERE user_type = 'dealer' AND status = 'active'
+              ORDER BY company_name ASC 
+              LIMIT :limit OFFSET :offset";
+    
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+    $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+    $stmt->execute();
+    
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+// Get user statistics for admin dashboard
+public function getUserStatistics() {
+    $query = "SELECT 
+                COUNT(*) as total_users,
+                SUM(CASE WHEN user_type = 'customer' THEN 1 ELSE 0 END) as customers,
+                SUM(CASE WHEN user_type = 'dealer' THEN 1 ELSE 0 END) as dealers,
+                SUM(CASE WHEN user_type = 'admin' THEN 1 ELSE 0 END) as admins,
+                SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) as active_users,
+                SUM(CASE WHEN email_verified = 1 THEN 1 ELSE 0 END) as verified_users,
+                SUM(CASE WHEN DATE(created_at) = CURDATE() THEN 1 ELSE 0 END) as new_today,
+                SUM(CASE WHEN DATE(created_at) >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) THEN 1 ELSE 0 END) as new_this_week
+              FROM " . $this->table;
+    
+    $stmt = $this->conn->prepare($query);
+    $stmt->execute();
+    
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
 }
 ?>

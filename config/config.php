@@ -1,6 +1,7 @@
 <?php
 // Central configuration for the Helicopter Marketplace
-
+define('PROJECT_ROOT', dirname(__DIR__));
+// require_once __DIR__ . '/database.php';  
 
 // Start session if not already started
 if (session_status() === PHP_SESSION_NONE) {

@@ -1,6 +1,6 @@
 <?php
-// Simple test to see your helicopter data
-// Put this in your public folder as test_db.php
+// Simple test to see my helicopter data
+// Putingt this in our public folder as test_db.php
 
 $host = 'localhost';
 $dbname = 'helicopter_marketplace';

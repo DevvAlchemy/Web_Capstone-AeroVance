@@ -321,3 +321,7 @@ window.addEventListener('scroll', () => {
     }
 });
 </script>
+
+<a href="/account/profile">Profile</a>
+<a href="/dashboard">Dashboard</a>
+<a href="/account/order/123">Order #123</a>

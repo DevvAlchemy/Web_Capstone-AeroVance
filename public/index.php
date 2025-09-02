@@ -188,6 +188,8 @@ $router->post('/contact', function() {
             echo 'Invalid CSRF token. Please reload the form and try again.';
             exit;
         }
+
+        
         // Process contact form
         $name = sanitizeInput($_POST['name'] ?? '');
         $email = sanitizeInput($_POST['email'] ?? '');
@@ -357,8 +359,6 @@ $router->get('/api/helicopters', function() {
         echo json_encode(['data' => [], 'error' => 'Unable to load helicopters']);
     }
 });
-
-// Add these routes to your index.php file after the existing routes
 
 // Shopping Cart routes
 $router->get('/cart', function() {
@@ -639,7 +639,38 @@ $router->post('/api/newsletter/subscribe', function() {
     }
 });
 
-// Run the router
+//router fixes / need to be connected well, files not in right place from the looks of it 
+// Profile page
+$router->get('/account/profile', function() {
+    if (!isLoggedIn()) {
+        header('Location: /login?redirect=/account/profile');
+        exit;
+    }
+    include '../views/account/profile.php';
+});
+
+// Order detail page
+$router->get('/account/order/{id}', function($id) {
+    if (!isLoggedIn()) {
+        header('Location: /login?redirect=/account/order/' . $id);
+        exit;
+    }
+    // Pass $id into the view so i can load order info
+    $orderId = $id;
+    include '../views/account/order-details.php';
+});
+
+// Dashboard page
+$router->get('/dashboard', function() {
+    if (!isLoggedIn()) {
+        header('Location: /login?redirect=/dashboard');
+        exit;
+    }
+    include '../views/account/dashboard.php';
+});
+
+
+// Run the router after all routers connected
 try {
     $router->run();
 } catch (Exception $e) {

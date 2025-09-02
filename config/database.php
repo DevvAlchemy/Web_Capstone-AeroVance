@@ -1,5 +1,7 @@
 <?php
 
+define('BASE_PATH', dirname(__DIR__)); // This gets the helicopter-marketplace directory
+
  // Handles database connection and PDO setup
 class Database {
     private $host;
