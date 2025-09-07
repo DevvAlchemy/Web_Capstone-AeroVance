@@ -401,7 +401,7 @@ try {
 </head>
 <body>
     <!-- Include Header -->
-    <?php include '../../includes/header.php'; ?>
+    <?php include '../includes/header.php'; ?>
 
     <div class="order-details-container">
         <div class="container">
@@ -619,7 +619,7 @@ try {
     </div>
 
     <!-- Include Footer -->
-    <?php include '../../includes/footer.php'; ?>
+    <?php include '../includes/footer.php'; ?>
 
     <script>
         // Cancel order function

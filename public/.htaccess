@@ -1,6 +1,161 @@
+; # HELICOPTER MARKETPLACE - APACHE CONFIGURATION
+; # Tells Apache how to handle URLs and route them properly
+
+; # Turn on URL rewriting
+; RewriteEngine On
+
+; # Set the base directory (adjust this to match your folder structure)
+; # If your site is in a subfolder like localhost/helicopter-marketplace/
+; # RewriteBase /helicopter-marketplace/
+
+; # IMPORTANT: Serve static files directly (CSS, JS, Images)
+; # This prevents routing system from trying to process asset files
+; # Student note: Static files don't need PHP processing
+; RewriteCond %{REQUEST_FILENAME} -f
+; RewriteCond %{REQUEST_URI} \.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|pdf|txt)$ [NC]
+; RewriteRule ^(.*)$ - [L]
+
+; # Route everything else to our PHP router in public/index.php
+; # This is where the magic happens - all URLs go through our routing system
+; RewriteCond %{REQUEST_FILENAME} !-f
+; RewriteCond %{REQUEST_FILENAME} !-d
+; RewriteRule ^(.*)$ public/index.php [QSA,L]
+
+; # Security headers
+; Header always set X-Content-Type-Options nosniff
+; Header always set X-Frame-Options SAMEORIGIN
+; Header always set X-XSS-Protection "1; mode=block"
+
+; # Set proper MIME types for different file extensions
+; AddType text/css .css
+; AddType application/javascript .js
+; AddType font/woff .woff
+; AddType font/woff2 .woff2
+
+; # Compress text files for better performance
+; <IfModule mod_deflate.c>
+;     AddOutputFilterByType DEFLATE text/plain
+;     AddOutputFilterByType DEFLATE text/html
+;     AddOutputFilterByType DEFLATE text/xml
+;     AddOutputFilterByType DEFLATE text/css
+;     AddOutputFilterByType DEFLATE application/xml
+;     AddOutputFilterByType DEFLATE application/xhtml+xml
+;     AddOutputFilterByType DEFLATE application/rss+xml
+;     AddOutputFilterByType DEFLATE application/javascript
+;     AddOutputFilterByType DEFLATE application/x-javascript
+; </IfModule>
+
+; # Cache static assets for better performance
+; <IfModule mod_expires.c>
+;     ExpiresActive on
+;     ExpiresByType text/css "access plus 1 year"
+;     ExpiresByType application/javascript "access plus 1 year"
+;     ExpiresByType image/png "access plus 1 year"
+;     ExpiresByType image/jpg "access plus 1 year"
+;     ExpiresByType image/jpeg "access plus 1 year"
+;     ExpiresByType image/gif "access plus 1 year"
+;     ExpiresByType font/woff "access plus 1 year"
+;     ExpiresByType font/woff2 "access plus 1 year"
+; </IfModule>
+
+; # Prevent access to sensitive files
+; <Files ~ "^\.">
+;     Order allow,deny
+;     Deny from all
+; </Files>
+
+; <Files ~ "\.php$">
+;     # Allow PHP files to be processed normally
+; </Files>
+
+; # Prevent access to configuration files
+; <Files "config.php">
+;     Order allow,deny
+;     Deny from all
+; </Files>
+
+; # Custom error pages (optional)
+; # ErrorDocument 404 /public/index.php
+; # ErrorDocument 500 /public/index.php
+
+
+
+# DEVELOPMENT-FRIENDLY APACHE CONFIGURATION
+# This version allows me to browse folders while still routing my app
+
+; RewriteEngine On
+
+; # DEVELOPMENT: Allow browsing specific directories
+; # Remove these lines in production for security
+; RewriteCond %{REQUEST_URI} ^/helicopter-marketplace/(views|models|controllers|config|includes|assets)/
+; RewriteRule ^(.*)$ - [L]
+
+; # Serve static files directly (CSS, JS, Images)
+; RewriteCond %{REQUEST_FILENAME} -f
+; RewriteCond %{REQUEST_URI} \.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|pdf|txt)$ [NC]
+; RewriteRule ^(.*)$ - [L]
+
+; # Allow access to existing files and directories
+; RewriteCond %{REQUEST_FILENAME} -f [OR]
+; RewriteCond %{REQUEST_FILENAME} -d
+; RewriteRule ^(.*)$ - [L]
+
+; # Route everything else to our PHP router
+; RewriteRule ^(.*)$ public/index.php [QSA,L]
+
+; # Enable directory browsing (DEVELOPMENT ONLY)
+; Options +Indexes
+
+; # Set proper MIME types
+; AddType text/css .css
+; AddType application/javascript .js
+; AddType font/woff .woff
+; AddType font/woff2 .woff2
+
+; # Security headers
+; Header always set X-Content-Type-Options nosniff
+; Header always set X-Frame-Options SAMEORIGIN
+; Header always set X-XSS-Protection "1; mode=block"
+
+; # Prevent access to sensitive files
+; <Files ~ "^\.">
+;     Order allow,deny
+;     Deny from all
+; </Files>
+
+; # Don't show .htaccess itself
+; <Files ".htaccess">
+;     Order allow,deny
+;     Deny from all
+; </Files>
+
+
+
+# //// TESTING /////
+
+# TEMPORARY DEBUG CONFIGURATION
+# Use this to test your file structure, then switch back to full routing
+
 RewriteEngine On
 
-# Redirect everything to index.php if not a real file or directory
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^ index.php [QSA,L]
+# Only serve static files and allow directory browsing
+# This disables routing so you can see your file structure
+
+# Serve static files directly
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteCond %{REQUEST_URI} \.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ [NC]
+RewriteRule ^(.*)$ - [L]
+
+# ROUTING DISABLED FOR DEBUGGING - Enable directory browsing
+Options +Indexes
+
+# Set proper MIME types
+AddType text/css .css
+AddType application/javascript .js
+
+# When ready to test routing, comment out the Options line above
+# and uncomment these lines below:
+
+# RewriteCond %{REQUEST_FILENAME} !-f
+# RewriteCond %{REQUEST_FILENAME} !-d  
+# RewriteRule ^(.*)$ public/index.php [QSA,L]
