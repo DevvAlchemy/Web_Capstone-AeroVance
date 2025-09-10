@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Page Not Found - Helicopter Marketplace</title>
+    <title>Page Not Found - AeroVance</title>
     <style>
         body {
             font-family: 'Segoe UI', sans-serif;
@@ -173,7 +173,7 @@
             });
             
             // Log helpful information for developers
-            console.log('🚁 Helicopter Marketplace - 404 Error');
+            console.log('🚁 AEROVANCE - 404 Error');
             console.log('Current URL:', window.location.href);
             console.log('Referrer:', document.referrer || 'Direct access');
         });

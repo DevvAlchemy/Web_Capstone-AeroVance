@@ -62,7 +62,7 @@
         </div>
         
         <div class="footer-bottom">
-            <p>&copy; <?= date('Y') ?> Helicopter Marketplace. All rights reserved. | 
+            <p>&copy; <?= date('Y') ?> AEROVANCE. All rights reserved. | 
                <a href="/privacy">Privacy Policy</a> | 
                <a href="/terms">Terms of Service</a> |
                <a href="/sitemap">Sitemap</a>

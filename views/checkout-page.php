@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout - Helicopter Marketplace</title>
+    <title>Checkout - AeroVance</title>
     
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -433,7 +433,7 @@
         <div class="nav-container">
             <a href="/" class="logo">
                 <i class="fas fa-helicopter"></i>
-                <span>Helicopter Marketplace</span>
+                <span>AEROVANCE</span>
             </a>
             
             <nav class="nav-menu">
@@ -750,7 +750,7 @@
             </div>
             
             <div class="footer-bottom">
-                <p>&copy; 2025 Helicopter Marketplace. All rights reserved. | <a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms of Service</a></p>
+                <p>&copy; 2025 AeroVance. All rights reserved. | <a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms of Service</a></p>
             </div>
         </div>
     </footer>

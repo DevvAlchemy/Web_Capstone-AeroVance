@@ -1,5 +1,5 @@
 <?php
-// Central configuration for the Helicopter Marketplace
+// Central configuration for the AEROVANCE
 define('PROJECT_ROOT', dirname(__DIR__));
 // require_once __DIR__ . '/database.php';  
 
@@ -13,7 +13,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 // Site configuration
-define('SITE_NAME', 'Helicopter Marketplace');
+define('SITE_NAME', 'AEROVANCE');
 define('SITE_URL', $_ENV['SITE_URL'] ?? 'http://localhost');
 define('SITE_EMAIL', $_ENV['SITE_EMAIL'] ?? 'info@helicoptermarketplace.com');
 define('ADMIN_EMAIL', $_ENV['ADMIN_EMAIL'] ?? 'admin@helicoptermarketplace.com');

@@ -27,7 +27,7 @@ $currentPage = basename($_SERVER['REQUEST_URI']);
     <div class="nav-container">
         <a href="/" class="logo">
             <i class="fas fa-helicopter"></i>
-            <span>Helicopter Marketplace</span>
+            <span>AEROVANCE</span>
         </a>
         
         <nav class="nav-menu">
@@ -80,7 +80,7 @@ $currentPage = basename($_SERVER['REQUEST_URI']);
     <div class="mobile-menu-header">
         <a href="/" class="logo">
             <i class="fas fa-helicopter"></i>
-            <span>Helicopter Marketplace</span>
+            <span>AEROVANCE</span>
         </a>
         <button class="mobile-menu-close" onclick="toggleMobileMenu()">
             <i class="fas fa-times"></i>

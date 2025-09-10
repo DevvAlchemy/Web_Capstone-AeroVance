@@ -345,6 +345,31 @@ $router->get('/logout', function() {
     exit;
 });
 
+// General Helicopters Page (Educational + Overview)
+$router->get('/helicopters/learn', function() {
+    include '../views/general-helicopters.php';
+});
+
+// Alternative route for general helicopters
+$router->get('/helicopters/guide', function() {
+    include '../views/general-helicopters.php';
+});
+
+// Personal Helicopters Category Page
+$router->get('/category/personal', function() {
+    include '../views/personal-helicopters.php';
+});
+
+// Business Helicopters Category Page  
+$router->get('/views/business', function() {
+    include './views/business-helicopters.php';
+});
+
+// Emergency Services Helicopters Category Page
+$router->get('/category/emergency', function() {
+    include '../views/emergency-helicopters.php';
+});
+
 // ============================================================================
 // ACCOUNT/DASHBOARD ROUTES (CRITICAL FIXES)
 // ============================================================================

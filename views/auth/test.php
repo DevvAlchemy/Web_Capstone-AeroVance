@@ -78,7 +78,7 @@ debug("Request: " . $_SERVER['REQUEST_METHOD'] . " " . $requestUri);
 
 // HOME PAGE (simple redirect for now)
 route('GET', '/', function() {
-    echo "<h1>Helicopter Marketplace</h1>";
+    echo "<h1>AEROVANCE</h1>";
     echo "<p><a href='/login'>Login</a> | <a href='/register'>Register</a></p>";
     echo "<p>Testing authentication pages only</p>";
 });

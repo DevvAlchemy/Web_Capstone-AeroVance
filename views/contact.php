@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Us - Helicopter Marketplace</title>
+    <title>Contact Us - AeroVance </title>
     
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -140,7 +140,7 @@
         <div class="nav-container">
             <a href="/helicopter-marketplace/views/home.php" class="logo">
                 <i class="fas fa-helicopter"></i>
-                <span>Helicopter Marketplace</span>
+                <span>AEROVANCE</span>
             </a>
             
             <nav class="nav-menu">
@@ -228,8 +228,8 @@
                     <p>
                         2500 Aviation Blvd<br>
                         Suite 400<br>
-                        Miami, FL 33142<br>
-                        United States
+                        Toronto, ON K3L 1H2<br>
+                        Canada
                     </p>
                     <p style="font-size: 0.9rem; margin-top: 15px;">
                         Visit by appointment<br>
@@ -454,7 +454,7 @@
             </div>
             
             <div class="footer-bottom">
-                <p>&copy; 2025 Helicopter Marketplace. All rights reserved. | <a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms of Service</a></p>
+                <p>&copy; 2025 AeroVance. All rights reserved. | <a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms of Service</a></p>
             </div>
         </div>
     </footer>

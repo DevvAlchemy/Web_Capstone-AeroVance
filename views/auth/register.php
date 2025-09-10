@@ -128,7 +128,7 @@ if (isset($_SESSION['success'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Account - Helicopter Marketplace</title>
+    <title>Create Account - AeroVance</title>
     
     <!-- Font Awesome for icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -136,8 +136,7 @@ if (isset($_SESSION['success'])) {
     <style>
         /**
          * AUTHENTICATION PAGE STYLES
-         * Clean, modern design suitable for reuse in other projects
-         * Orange theme for helicopter marketplace
+         * Orange theme for AeroVance 
          */
         * {
             margin: 0;
@@ -431,7 +430,7 @@ if (isset($_SESSION['success'])) {
                 <i class="fas fa-helicopter"></i>
                 Create Account
             </h1>
-            <p>Join the premier helicopter marketplace</p>
+            <p>Join the premier AeroVance</p>
         </div>
 
         <!-- Success Message -->

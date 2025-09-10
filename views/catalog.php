@@ -55,7 +55,7 @@ try {
         <div class="nav-container">
             <a href="/" class="logo">
                 <i class="fas fa-helicopter"></i>
-                <span>Helicopter Marketplace</span>
+                <span>AEROVANCE</span>
             </a>
             
             <nav class="nav-menu">
@@ -361,7 +361,7 @@ try {
         </div>
         
         <div class="footer-bottom">
-            <p>&copy; 2025 Helicopter Marketplace. All rights reserved. | 
+            <p>&copy; 2025 AeroVance. All rights reserved. | 
                <a href="/privacy">Privacy Policy</a> | 
                <a href="/terms">Terms of Service</a>
             </p>

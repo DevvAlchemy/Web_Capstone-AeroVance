@@ -1,6 +1,6 @@
 <?php
 /**
- * DEBUGGING HELPER FOR HELICOPTER MARKETPLACE
+ * DEBUGGING HELPER FOR AeroVance
  * 
  * This file will help me understand what's happening with their routes
  * 
@@ -24,7 +24,7 @@ $projectRoot = dirname(__DIR__);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Debug Helper - Helicopter Marketplace</title>
+    <title>Debug Helper - AeroVance</title>
     <style>
         body { 
             font-family: 'Consolas', 'Monaco', monospace; 
@@ -123,7 +123,7 @@ $projectRoot = dirname(__DIR__);
 </head>
 <body>
     <div class="container">
-        <h1><i class="fas fa-bug"></i> Helicopter Marketplace - Debug Helper</h1>
+        <h1><i class="fas fa-bug"></i> AeroVance - Debug Helper</h1>
         <p>This tool helps diagnose routing and configuration issues. Use this to identify what's not working.</p>
 
         <!-- SERVER INFORMATION -->
@@ -234,7 +234,7 @@ $projectRoot = dirname(__DIR__);
                     const testDiv = document.getElementById('rewrite-test');
                     if (response.status === 404) {
                         return response.text().then(text => {
-                            if (text.includes('Helicopter Marketplace') || text.includes('Router') || text.includes('Page not found')) {
+                            if (text.includes('AEROVANCE') || text.includes('Router') || text.includes('Page not found')) {
                                 testDiv.innerHTML = '<div class="success"><i class="fas fa-check-circle"></i> ✓ URL rewriting is working - requests are reaching your router</div>';
                             } else {
                                 testDiv.innerHTML = '<div class="error"><i class="fas fa-times-circle"></i> ✗ URL rewriting may not be working - getting default Apache 404</div>';

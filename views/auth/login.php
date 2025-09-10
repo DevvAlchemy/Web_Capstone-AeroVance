@@ -96,7 +96,7 @@ if (isset($_SESSION['success'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In - Helicopter Marketplace</title>
+    <title>Sign In - AEROVANCE</title>
     
     <!-- Font Awesome for icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -388,7 +388,7 @@ if (isset($_SESSION['success'])) {
                 <i class="fas fa-helicopter"></i>
                 Welcome Back
             </h1>
-            <p>Sign in to your helicopter marketplace account</p>
+            <p>Sign in to your AeroVance account</p>
         </div>
 
         <!-- Success Message -->
