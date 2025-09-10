@@ -366,7 +366,7 @@ try {
 </head>
 <body>
     <!--  Header -->
-   <?php include dirname(__DIR__) . '/includes/header.php'; ?>
+   <?php include '../includes/header.php'; ?>
 
     <div class="profile-container">
         <div class="container">
@@ -642,7 +642,7 @@ try {
     </div>
 
     <!--  Footer -->
-    <?php include dirname(__DIR__) . '/includes/footer.php'; ?>
+    <?php include '../includes/footer.php'; ?>
 
 
     <script>

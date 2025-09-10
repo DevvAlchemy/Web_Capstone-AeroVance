@@ -2,10 +2,10 @@
 
 <?php
 
-require_once '../../config/config.php';
-require_once '../../config/database.php';
-require_once '../../models/Order.php';
-require_once '../../models/User.php';
+require_once '../config/config.php';
+require_once '../config/database.php';
+require_once '../models/Order.php';
+require_once '../models/User.php';
 
 // Checking if user is logged in
 if (!isLoggedIn()) {

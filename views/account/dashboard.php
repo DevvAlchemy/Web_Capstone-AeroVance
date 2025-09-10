@@ -1,4 +1,6 @@
-//dashboard.php file
+//debug 
+
+
 
 <?php
 
@@ -25,7 +27,7 @@ try {
     $userModel = new User($db);
     $orderModel = new Order($db);
     $helicopterModel = new Helicopter($db);
-    $wishlistModel = new Wishlist($db);
+    // $wishlistModel = new Wishlist($db);
     
     // Get user data using your existing method
     $userData = $userModel->getUserById($userId);
