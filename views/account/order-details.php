@@ -1,4 +1,3 @@
-//order-detail.php file 
 
 <?php
 

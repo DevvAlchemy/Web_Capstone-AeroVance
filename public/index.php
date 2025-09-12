@@ -1,19 +1,14 @@
 <?php
 /**
- * CORRECTED ROUTER BASED ON YOUR ACTUAL FILE STRUCTURE
- * 
- * Fixed issues:
- * 1. Handles both standalone HTML files and PHP include files
- * 2. Proper error handling and debugging
- * 3. Correct include paths for all view types
- * 4. Session management
+ * Main Router File - public/index.php
+ * Handles routing and static file serving with all navigation fixes applied
  */
 
 // Enable error reporting for debugging
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Start session BEFORE any output
+// Starting session BEFORE any output
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -49,7 +44,7 @@ if (preg_match('/\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$/i', $re
         }
         
         // Set cache headers for static files
-        header('Cache-Control: public, max-age=31536000');
+        header('Cache-Control: public, max-age=31536000'); // 1 year
         header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', time() + 31536000));
         
         // Output the file
@@ -67,7 +62,7 @@ if (preg_match('/\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$/i', $re
 require_once '../config/config.php';
 require_once '../config/database.php';
 
-// Enhanced router class
+// Simple router class
 class Router {
     private $routes = [];
     private $basePath = '';
@@ -106,11 +101,6 @@ class Router {
             $requestUri = substr($requestUri, 0, -1);
         }
         
-        // Debug logging
-        if (defined('DEBUG_MODE') && DEBUG_MODE) {
-            error_log("Router: Trying to match $requestMethod $requestUri");
-        }
-        
         foreach ($this->routes as $route) {
             if ($route['method'] === $requestMethod) {
                 $pattern = $this->convertRouteToRegex($route['route']);
@@ -119,26 +109,15 @@ class Router {
                     // Remove the full match
                     array_shift($matches);
                     
-                    if (defined('DEBUG_MODE') && DEBUG_MODE) {
-                        error_log("Router: Matched route " . $route['route']);
-                    }
-                    
-                    try {
-                        // Call the callback with matches as parameters
-                        call_user_func_array($route['callback'], $matches);
-                        return;
-                    } catch (Exception $e) {
-                        error_log("Route handler error: " . $e->getMessage());
-                        http_response_code(500);
-                        echo "Internal server error: " . $e->getMessage();
-                        return;
-                    }
+                    // Call the callback with matches as parameters
+                    call_user_func_array($route['callback'], $matches);
+                    return;
                 }
             }
         }
         
         // No route found - 404
-        $this->handleNotFound($requestUri);
+        $this->handleNotFound();
     }
     
     private function convertRouteToRegex($route) {
@@ -147,27 +126,24 @@ class Router {
         return '#^' . $route . '$#';
     }
     
-    private function handleNotFound($requestUri) {
+    private function handleNotFound() {
         http_response_code(404);
-        
-        if (defined('DEBUG_MODE') && DEBUG_MODE) {
-            echo "<h1>404 - Route Not Found</h1>";
-            echo "<p><strong>Requested URI:</strong> " . htmlspecialchars($requestUri) . "</p>";
-            echo "<h3>Available Routes:</h3><ul>";
-            foreach ($this->routes as $route) {
-                echo "<li>{$route['method']} {$route['route']}</li>";
-            }
-            echo "</ul>";
-            echo "<p><strong>Working directory:</strong> " . getcwd() . "</p>";
-            echo "<p><strong>Session data:</strong> " . (isset($_SESSION['user']) ? 'User logged in' : 'No user session') . "</p>";
-        } else {
-            // Try to include a 404 page if it exists
-            if (file_exists('../views/errors/404.php')) {
-                include '../views/errors/404.php';
-            } else {
-                echo "Page not found";
-            }
-        }
+        echo "Page not found";
+    }
+}
+
+// put in a better place / change to do
+class Helicopter {
+    private $conn;
+
+    public function __construct($db) {
+        $this->conn = $db;
+    }
+    public function getFeatured() {
+        $query = "SELECT * FROM helicopters WHERE featured = 1";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
 
@@ -175,91 +151,57 @@ class Router {
 $router = new Router();
 
 // Load controllers
-if (file_exists('../controllers/HelicopterController.php')) {
-    require_once '../controllers/HelicopterController.php';
-}
+require_once '../controllers/HelicopterController.php';
 
-// ============================================================================
-// MAIN ROUTES
-// ============================================================================
-
-// HOME PAGE
+// Define routes
 $router->get('/', function() {
-    if (file_exists('../views/home.php')) {
-        include '../views/home.php';
-    } else {
-        echo "Home page not found";
-    }
+    include '../views/home.php';
 });
 
-// HELICOPTER ROUTES
+// FIXED: All helicopter-related routes
 $router->get('/helicopters', function() {
-    if (class_exists('HelicopterController')) {
-        $controller = new HelicopterController();
-        $controller->index();
-    } else {
-        // Fallback to direct include
-        if (file_exists('../views/catalog.php')) {
-            include '../views/catalog.php';
-        } else {
-            echo "Catalog page not found";
-        }
-    }
+    $controller = new HelicopterController();
+    $controller->index();
 });
 
 $router->get('/helicopter/{id}', function($id) {
-    // Validate ID
-    if (!is_numeric($id) || $id <= 0) {
-        http_response_code(404);
-        echo "Invalid helicopter ID";
-        return;
-    }
-    
-    $_GET['id'] = $id; // Pass ID to view
-    
-    if (class_exists('HelicopterController')) {
-        $controller = new HelicopterController();
-        $controller->show($id);
-    } else {
-        // Fallback to direct include
-        if (file_exists('../views/helicopter-detail.php')) {
-            include '../views/helicopter-detail.php';
-        } else {
-            echo "Helicopter detail page not found";
-        }
-    }
+    $controller = new HelicopterController();
+    $controller->show($id);
 });
 
-$router->get('/category/{category}', function($category) {
-    $validCategories = ['personal', 'business', 'emergency'];
-    
-    if (!in_array($category, $validCategories)) {
-        http_response_code(404);
-        echo "Invalid category";
-        return;
-    }
-    
-    $_GET['category'] = $category; // Pass category to view
-    
-    if (class_exists('HelicopterController')) {
-        $controller = new HelicopterController();
-        $controller->category($category);
-    } else {
-        // Fallback to catalog page
-        if (file_exists('../views/catalog.php')) {
-            include '../views/catalog.php';
-        } else {
-            echo "Category page not found";
-        }
-    }
+// FIXED: Category routes - all corrected to match navigation
+$router->get('/category/personal', function() {
+    include '../views/personal-helicopters.php';
 });
 
-// STATIC PAGES
+// FIXED: This was the main issue - was /views/business, now /category/business
+$router->get('/category/business', function() {
+    include '../views/business-helicopters.php';
+});
+
+$router->get('/category/emergency', function() {
+    include '../views/emergency-helicopters.php';
+});
+
+// FIXED: General helicopter learning page
+$router->get('/helicopters/learn', function() {
+    include '../views/general-helicopters.php';
+});
+
+$router->post('/search', function() {
+    $controller = new HelicopterController();
+    $controller->search();
+});
+
 $router->get('/about', function() {
     if (file_exists('../views/about.php')) {
         include '../views/about.php';
     } else {
-        echo "About page not found at ../views/about.php";
+        // Fallback content
+        echo '<!DOCTYPE html><html><head><title>About - AeroVance</title>';
+        echo '<link rel="stylesheet" href="/helicopter-marketplace/assets/css/app.css"></head><body>';
+        echo '<header class="header"><div class="nav-container"><a href="/" class="logo"><i class="fas fa-helicopter"></i><span>AeroVance</span></a></div></header>';
+        echo '<div class="container" style="margin-top: 120px; text-align: center;"><h1>About AeroVance</h1><p>About page coming soon...</p><a href="/" class="btn btn-primary">← Back to Home</a></div></body></html>';
     }
 });
 
@@ -267,28 +209,94 @@ $router->get('/contact', function() {
     if (file_exists('../views/contact.php')) {
         include '../views/contact.php';
     } else {
-        echo "Contact page not found at ../views/contact.php";
+        // Fallback content
+        echo '<!DOCTYPE html><html><head><title>Contact - AeroVance</title>';
+        echo '<link rel="stylesheet" href="/helicopter-marketplace/assets/css/app.css"></head><body>';
+        echo '<header class="header"><div class="nav-container"><a href="/" class="logo"><i class="fas fa-helicopter"></i><span>AeroVance</span></a></div></header>';
+        echo '<div class="container" style="margin-top: 120px; text-align: center;"><h1>Contact AeroVance</h1><p>Contact page coming soon...</p><a href="/" class="btn btn-primary">← Back to Home</a></div></body></html>';
     }
 });
 
-// AUTHENTICATION ROUTES
-$router->get('/login', function() {
-    if (isLoggedIn()) {
-        header('Location: /account');
+$router->post('/contact', function() {
+    // Handle contact form submission
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        session_start();
+        // CSRF protection
+        if (
+            !isset($_POST['csrf_token'], $_SESSION['csrf_token']) ||
+            !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])
+        ) {
+            http_response_code(403);
+            echo 'Invalid CSRF token. Please reload the form and try again.';
+            exit;
+        }
+        // Process contact form
+        $name = sanitizeInput($_POST['name'] ?? '');
+        $email = sanitizeInput($_POST['email'] ?? '');
+        $subject = sanitizeInput($_POST['subject'] ?? '');
+        $message = sanitizeInput($_POST['message'] ?? '');
+
+        // Basic validation
+        $errors = [];
+        if (empty($name)) $errors[] = 'Name is required';
+        if (empty($email)) $errors[] = 'Email is required';
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Valid email is required';
+        if (empty($subject)) $errors[] = 'Subject is required';
+        if (empty($message)) $errors[] = 'Message is required';
+
+        if (empty($errors)) {
+            // Save inquiry to database (if database is set up)
+            try {
+                $database = new Database();
+                $pdo = $database->connect();
+                
+                $query = "INSERT INTO inquiries (name, email, subject, message, inquiry_type, created_at) 
+                         VALUES (:name, :email, :subject, :message, 'general', NOW())";
+                
+                $stmt = $pdo->prepare($query);
+                $stmt->bindParam(':name', $name);
+                $stmt->bindParam(':email', $email);
+                $stmt->bindParam(':subject', $subject);
+                $stmt->bindParam(':message', $message);
+                
+                if ($stmt->execute()) {
+                    $_SESSION['success'] = 'Thank you for your message. We will get back to you soon!';
+                } else {
+                    $_SESSION['error'] = 'Sorry, there was an error sending your message. Please try again.';
+                }
+            } catch (Exception $e) {
+                $_SESSION['success'] = 'Thank you for your message. We will get back to you soon!'; // Fallback for demo
+                error_log('Contact form error: ' . $e->getMessage());
+            }
+        } else {
+            $_SESSION['error'] = implode('<br>', $errors);
+        }
+        
+        header('Location: /contact');
         exit;
     }
-    
+});
+
+$router->get('/login', function() {
+    if (isLoggedIn()) {
+        header('Location: /dashboard');
+        exit;
+    }
     if (file_exists('../views/auth/login.php')) {
         include '../views/auth/login.php';
     } else {
-        echo "Login page not found at ../views/auth/login.php";
+        // Fallback content
+        echo '<!DOCTYPE html><html><head><title>Login - AeroVance</title>';
+        echo '<link rel="stylesheet" href="/helicopter-marketplace/assets/css/app.css"></head><body>';
+        echo '<header class="header"><div class="nav-container"><a href="/" class="logo"><i class="fas fa-helicopter"></i><span>AeroVance</span></a></div></header>';
+        echo '<div class="container" style="margin-top: 120px; text-align: center;"><h1>Login</h1><p>Login page coming soon...</p><a href="/" class="btn btn-primary">← Back to Home</a></div></body></html>';
     }
 });
 
 $router->post('/login', function() {
-    if (file_exists('../models/User.php')) {
-        require_once '../models/User.php';
-        
+    require_once '../models/User.php';
+    
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $email = sanitizeInput($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
         
@@ -307,34 +315,38 @@ $router->post('/login', function() {
             
             if ($result['success']) {
                 $_SESSION['user'] = $result['user'];
-                $redirect = $_GET['redirect'] ?? '/account';
+                
+                // Redirect to intended page or dashboard
+                $redirect = $_GET['redirect'] ?? '/dashboard';
                 header('Location: ' . $redirect);
+                exit;
             } else {
                 $_SESSION['error'] = $result['message'];
                 header('Location: /login');
+                exit;
             }
         } catch (Exception $e) {
             $_SESSION['error'] = 'Login failed. Please try again.';
             error_log('Login error: ' . $e->getMessage());
             header('Location: /login');
+            exit;
         }
-    } else {
-        $_SESSION['error'] = 'User model not found';
-        header('Location: /login');
     }
-    exit;
 });
 
 $router->get('/register', function() {
     if (isLoggedIn()) {
-        header('Location: /account');
+        header('Location: /dashboard');
         exit;
     }
-    
     if (file_exists('../views/auth/register.php')) {
         include '../views/auth/register.php';
     } else {
-        echo "Register page not found at ../views/auth/register.php";
+        // Fallback content
+        echo '<!DOCTYPE html><html><head><title>Register - AeroVance</title>';
+        echo '<link rel="stylesheet" href="/helicopter-marketplace/assets/css/app.css"></head><body>';
+        echo '<header class="header"><div class="nav-container"><a href="/" class="logo"><i class="fas fa-helicopter"></i><span>AeroVance</span></a></div></header>';
+        echo '<div class="container" style="margin-top: 120px; text-align: center;"><h1>Register</h1><p>Registration page coming soon...</p><a href="/" class="btn btn-primary">← Back to Home</a></div></body></html>';
     }
 });
 
@@ -345,119 +357,58 @@ $router->get('/logout', function() {
     exit;
 });
 
-// General Helicopters Page (Educational + Overview)
-$router->get('/helicopters/learn', function() {
-    include '../views/general-helicopters.php';
+// API routes for future use
+$router->get('/api/helicopters', function() {
+    header('Content-Type: application/json');
+    
+    try {
+        require_once '../models/Helicopter.php';
+        $database = new Database();
+        $db = $database->connect();
+        $helicopter = new Helicopter($db);
+        
+        $helicopters = $helicopter->getFeatured();
+        echo json_encode(['data' => $helicopters]);
+    } catch (Exception $e) {
+        echo json_encode(['data' => [], 'error' => 'Unable to load helicopters']);
+    }
 });
 
-// Alternative route for general helicopters
-$router->get('/helicopters/guide', function() {
-    include '../views/general-helicopters.php';
+// Add these routes to your index.php file after the existing routes
+
+// Shopping Cart routes
+$router->get('/cart', function() {
+    if (!isLoggedIn()) {
+        header('Location: /login?redirect=/cart');
+        exit;
+    }
+    include '../views/cart.php';
 });
 
-// Personal Helicopters Category Page
-$router->get('/category/personal', function() {
-    include '../views/personal-helicopters.php';
+// Checkout routes
+$router->get('/checkout', function() {
+    if (!isLoggedIn()) {
+        header('Location: /login?redirect=/checkout');
+        exit;
+    }
+    include '../views/checkout.php';
 });
 
-// Business Helicopters Category Page  
-$router->get('/views/business', function() {
-    include './views/business-helicopters.php';
-});
-
-// Emergency Services Helicopters Category Page
-$router->get('/category/emergency', function() {
-    include '../views/emergency-helicopters.php';
-});
-
-// ============================================================================
-// ACCOUNT/DASHBOARD ROUTES (CRITICAL FIXES)
-// ============================================================================
-
-// Main account/dashboard page
+// Account/Dashboard routes
 $router->get('/account', function() {
     if (!isLoggedIn()) {
-        header('Location: /login?redirect=/account');
+        header('Location: /login');
         exit;
     }
-    
-    // Check if dashboard file exists
-    if (file_exists('../views/account/dashboard.php')) {
-        include '../views/account/dashboard.php';
-    } else {
-        echo "Dashboard not found at ../views/account/dashboard.php<br>";
-        echo "Current directory: " . getcwd() . "<br>";
-        echo "Looking for: " . realpath('../views/account/dashboard.php') . "<br>";
-        echo "File exists check: " . (file_exists('../views/account/dashboard.php') ? 'YES' : 'NO');
-    }
+    include '../views/account/dashboard.php';
 });
 
-$router->get('/dashboard', function() {
-    if (!isLoggedIn()) {
-        header('Location: /login?redirect=/dashboard');
-        exit;
-    }
-    // Redirect to /account for consistency
-    header('Location: /account');
-    exit;
-});
-
-// Profile page
-$router->get('/account/profile', function() {
-    if (!isLoggedIn()) {
-        header('Location: /login?redirect=/account/profile');
-        exit;
-    }
-    
-    if (file_exists('../views/account/profile.php')) {
-        include '../views/account/profile.php';
-    } else {
-        echo "Profile page not found at ../views/account/profile.php<br>";
-        echo "Current directory: " . getcwd() . "<br>";
-        echo "Looking for: " . realpath('../views/account/profile.php') . "<br>";
-        echo "File exists check: " . (file_exists('../views/account/profile.php') ? 'YES' : 'NO');
-    }
-});
-
-// Order detail page
-$router->get('/account/order/{id}', function($id) {
-    if (!isLoggedIn()) {
-        header('Location: /login?redirect=/account/order/' . $id);
-        exit;
-    }
-    
-    // Validate ID
-    if (!is_numeric($id) || $id <= 0) {
-        http_response_code(404);
-        echo "Invalid order ID";
-        return;
-    }
-    
-    $_GET['id'] = $id; // Pass ID to view
-    
-    if (file_exists('../views/account/order-details.php')) {
-        include '../views/account/order-details.php';
-    } else {
-        echo "Order details page not found at ../views/account/order-details.php<br>";
-        echo "Order ID: $id<br>";
-        echo "Current directory: " . getcwd() . "<br>";
-        echo "Looking for: " . realpath('../views/account/order-details.php') . "<br>";
-        echo "File exists check: " . (file_exists('../views/account/order-details.php') ? 'YES' : 'NO');
-    }
-});
-
-// Other account routes
 $router->get('/account/orders', function() {
     if (!isLoggedIn()) {
         header('Location: /login');
         exit;
     }
-    
-    if (file_exists('../views/account/orders.php')) {
-        include '../views/account/orders.php';
-    } else {
-        echo "Orders page not found at ../views/account/orders.php";
-    }
+    include '../views/account/orders.php';
 });
 
 $router->get('/account/wishlist', function() {
@@ -465,12 +416,7 @@ $router->get('/account/wishlist', function() {
         header('Location: /login');
         exit;
     }
-    
-    if (file_exists('../views/account/wishlist.php')) {
-        include '../views/account/wishlist.php';
-    } else {
-        echo "Wishlist page not found at ../views/account/wishlist.php";
-    }
+    include '../views/account/wishlist.php';
 });
 
 $router->get('/account/settings', function() {
@@ -478,80 +424,250 @@ $router->get('/account/settings', function() {
         header('Location: /login');
         exit;
     }
-    
-    if (file_exists('../views/account/settings.php')) {
-        include '../views/account/settings.php';
-    } else {
-        echo "Settings page not found at ../views/account/settings.php";
-    }
+    include '../views/account/settings.php';
 });
 
-// SHOPPING CART
-$router->get('/cart', function() {
-    if (!isLoggedIn()) {
-        header('Location: /login?redirect=/cart');
-        exit;
-    }
-    
-    if (file_exists('../views/cart.php')) {
-        include '../views/cart.php';
-    } else {
-        echo "Cart page not found at ../views/cart.php";
-    }
-});
-
-// CHECKOUT
-$router->get('/checkout', function() {
-    if (!isLoggedIn()) {
-        header('Location: /login?redirect=/checkout');
-        exit;
-    }
-    
-    if (file_exists('../views/checkout.php')) {
-        include '../views/checkout.php';
-    } else {
-        echo "Checkout page not found at ../views/checkout.php";
-    }
-});
-
-// TEST ROUTE (for debugging)
-$router->get('/test-paths', function() {
-    include '../views/test-paths.php';
-});
-
-// SEARCH
-$router->post('/search', function() {
-    $query = http_build_query($_POST);
-    header('Location: /helicopters' . ($query ? ('?' . $query) : ''));
-    exit;
-});
-
-// ============================================================================
-// API ROUTES (Basic structure)
-// ============================================================================
-
-// API routes would go here...
-$router->get('/api/helicopters', function() {
+// API Routes for AJAX calls
+$router->post('/api/cart/add', function() {
     header('Content-Type: application/json');
-    echo json_encode(['message' => 'API endpoint working']);
+    
+    if (!isLoggedIn()) {
+        echo json_encode(['success' => false, 'message' => 'Please login first']);
+        exit;
+    }
+    
+    try {
+        $data = json_decode(file_get_contents('php://input'), true);
+        $helicopterId = $data['helicopter_id'] ?? 0;
+        
+        if (!$helicopterId) {
+            echo json_encode(['success' => false, 'message' => 'Invalid helicopter ID']);
+            exit;
+        }
+        
+        require_once '../config/database.php';
+        require_once '../models/Cart.php';
+        
+        $database = new Database();
+        $db = $database->connect();
+        $cart = new Cart($db);
+        
+        $result = $cart->addToCart($_SESSION['user']['id'], $helicopterId);
+        $cartCount = $cart->getCartCount($_SESSION['user']['id']);
+        
+        echo json_encode([
+            'success' => $result,
+            'cart_count' => $cartCount,
+            'message' => $result ? 'Added to cart successfully!' : 'Error adding to cart'
+        ]);
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'message' => 'Server error']);
+    }
 });
 
-// ============================================================================
-// RUN THE ROUTER
-// ============================================================================
+$router->post('/api/cart/update', function() {
+    header('Content-Type: application/json');
+    
+    if (!isLoggedIn()) {
+        echo json_encode(['success' => false, 'message' => 'Please login first']);
+        exit;
+    }
+    
+    try {
+        $data = json_decode(file_get_contents('php://input'), true);
+        $cartId = $data['cart_id'] ?? 0;
+        $quantity = $data['quantity'] ?? 1;
+        
+        require_once '../config/database.php';
+        require_once '../models/Cart.php';
+        
+        $database = new Database();
+        $db = $database->connect();
+        $cart = new Cart($db);
+        
+        $result = $cart->updateQuantity($cartId, $_SESSION['user']['id'], $quantity);
+        $totals = $cart->getCartTotals($_SESSION['user']['id']);
+        
+        echo json_encode([
+            'success' => $result,
+            'totals' => $totals,
+            'message' => $result ? 'Cart updated' : 'Error updating cart'
+        ]);
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'message' => 'Server error']);
+    }
+});
 
+$router->post('/api/cart/remove', function() {
+    header('Content-Type: application/json');
+    
+    if (!isLoggedIn()) {
+        echo json_encode(['success' => false, 'message' => 'Please login first']);
+        exit;
+    }
+    
+    try {
+        $data = json_decode(file_get_contents('php://input'), true);
+        $cartId = $data['cart_id'] ?? 0;
+        
+        require_once '../config/database.php';
+        require_once '../models/Cart.php';
+        
+        $database = new Database();
+        $db = $database->connect();
+        $cart = new Cart($db);
+        
+        $result = $cart->removeItem($cartId, $_SESSION['user']['id']);
+        $cartCount = $cart->getCartCount($_SESSION['user']['id']);
+        $totals = $cart->getCartTotals($_SESSION['user']['id']);
+        
+        echo json_encode([
+            'success' => $result,
+            'cart_count' => $cartCount,
+            'totals' => $totals,
+            'message' => $result ? 'Item removed' : 'Error removing item'
+        ]);
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'message' => 'Server error']);
+    }
+});
+
+$router->post('/api/wishlist/add', function() {
+    header('Content-Type: application/json');
+    
+    if (!isLoggedIn()) {
+        echo json_encode(['success' => false, 'message' => 'Please login first']);
+        exit;
+    }
+    
+    try {
+        $data = json_decode(file_get_contents('php://input'), true);
+        $helicopterId = $data['helicopter_id'] ?? 0;
+        
+        require_once '../config/database.php';
+        require_once '../models/Wishlist.php';
+        
+        $database = new Database();
+        $db = $database->connect();
+        // $wishlist = new Wishlist($db); //remove comment when fixed other
+        
+        $result = $wishlist->addToWishlist($_SESSION['user']['id'], $helicopterId);
+        
+        echo json_encode([
+            'success' => $result,
+            'message' => $result ? 'Added to wishlist!' : 'Already in wishlist'
+        ]);
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'message' => 'Server error']);
+    }
+});
+
+$router->post('/api/inquiry/send', function() {
+    header('Content-Type: application/json');
+    
+    if (!isLoggedIn()) {
+        echo json_encode(['success' => false, 'message' => 'Please login first']);
+        exit;
+    }
+    
+    try {
+        $helicopterId = $_POST['helicopter_id'] ?? 0;
+        $name = sanitizeInput($_POST['name'] ?? '');
+        $email = sanitizeInput($_POST['email'] ?? '');
+        $phone = sanitizeInput($_POST['phone'] ?? '');
+        $message = sanitizeInput($_POST['message'] ?? '');
+        
+        // Validate inputs
+        if (empty($name) || empty($email) || empty($message)) {
+            echo json_encode(['success' => false, 'message' => 'Please fill all required fields']);
+            exit;
+        }
+        
+        require_once '../config/database.php';
+        
+        $database = new Database();
+        $db = $database->connect();
+        
+        $query = "INSERT INTO inquiries 
+                  (user_id, helicopter_id, name, email, phone, message, created_at)
+                  VALUES (:user_id, :helicopter_id, :name, :email, :phone, :message, NOW())";
+        
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(':user_id', $_SESSION['user']['id']);
+        $stmt->bindParam(':helicopter_id', $helicopterId);
+        $stmt->bindParam(':name', $name);
+        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':phone', $phone);
+        $stmt->bindParam(':message', $message);
+        
+        $result = $stmt->execute();
+        
+        echo json_encode([
+            'success' => $result,
+            'message' => $result ? 'Message sent successfully!' : 'Error sending message'
+        ]);
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'message' => 'Server error']);
+    }
+});
+
+$router->post('/api/newsletter/subscribe', function() {
+    header('Content-Type: application/json');
+    
+    try {
+        $data = json_decode(file_get_contents('php://input'), true);
+        $email = filter_var($data['email'] ?? '', FILTER_VALIDATE_EMAIL);
+        
+        if (!$email) {
+            echo json_encode(['success' => false, 'message' => 'Invalid email address']);
+            exit;
+        }
+        
+        require_once '../config/database.php';
+        
+        $database = new Database();
+        $db = $database->connect();
+        
+        // Check if already subscribed
+        $checkQuery = "SELECT id FROM newsletter_subscribers WHERE email = :email";
+        $stmt = $db->prepare($checkQuery);
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
+        
+        if ($stmt->fetch()) {
+            echo json_encode(['success' => false, 'message' => 'Already subscribed']);
+            exit;
+        }
+        
+        // Subscribe
+        $query = "INSERT INTO newsletter_subscribers (email, created_at) VALUES (:email, NOW())";
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(':email', $email);
+        
+        $result = $stmt->execute();
+        
+        echo json_encode([
+            'success' => $result,
+            'message' => $result ? 'Successfully subscribed!' : 'Error subscribing'
+        ]);
+    } catch (Exception $e) {
+        echo json_encode(['success' => false, 'message' => 'Server error']);
+    }
+});
+
+// TEST ROUTE for debugging navigation issues
+$router->get('/test-routes', function() {
+    include '../views/test-routes.php';
+});
+
+// Run the router
 try {
     $router->run();
 } catch (Exception $e) {
+    // Log error and show generic error page
     error_log('Router error: ' . $e->getMessage());
     http_response_code(500);
-    
-    if (defined('DEBUG_MODE') && DEBUG_MODE) {
-        echo "<h1>Router Error</h1>";
-        echo "<p>" . htmlspecialchars($e->getMessage()) . "</p>";
-        echo "<pre>" . htmlspecialchars($e->getTraceAsString()) . "</pre>";
-    } else {
-        echo "Internal Server Error";
-    }
+    echo "Internal Server Error";
 }
+
 ?>

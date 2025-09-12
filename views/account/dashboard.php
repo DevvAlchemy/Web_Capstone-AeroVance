@@ -1,7 +1,5 @@
 //debug 
 
-
-
 <?php
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/helicopter-marketplace/config/config.php';

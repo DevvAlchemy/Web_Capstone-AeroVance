@@ -16,6 +16,87 @@
     <link rel="stylesheet" href="/helicopter-marketplace/assets/css/app.css">
     
     <style>
+        /* 🎨 FIXED: Complete styles for General Helicopter Page */
+        
+        /* Base body styling (in case main CSS doesn't load) */
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        /* Container utility */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Section title styling */
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title h2 {
+            font-size: 3rem;
+            color: #FF6B35;
+            margin-bottom: 15px;
+        }
+
+        .section-title p {
+            font-size: 1.2rem;
+            color: #cccccc;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Hero buttons styling */
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Button base styles (backup) */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #FF6B35, #FF8C42);
+            color: white;
+        }
+
+        .btn-outline {
+            border: 2px solid #FF6B35;
+            color: #FF6B35;
+            background: transparent;
+        }
+
+        .btn-large {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
         /* Educational Section Styles */
         .education-hero {
             background: linear-gradient(135deg, 
@@ -25,6 +106,7 @@
             padding: 120px 0 80px;
             text-align: center;
             color: white;
+            margin-top: 80px; /* Account for fixed header */
         }
 
         .education-hero h1 {
@@ -97,6 +179,34 @@
             margin-bottom: 20px;
         }
 
+        /* 🔧 FIXED: Missing Progress Bar Styles */
+        .module-progress {
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FF6B35, #FF8C42);
+            transition: width 0.5s ease;
+            border-radius: 4px;
+        }
+
+        .progress-text {
+            color: #aaaaaa;
+            font-size: 0.9rem;
+            text-align: center;
+            display: block;
+        }
+
         /* Interactive Timeline */
         .helicopter-timeline {
             padding: 80px 0;
@@ -122,6 +232,7 @@
             display: flex;
             margin-bottom: 50px;
             align-items: center;
+            position: relative;
         }
 
         .timeline-item:nth-child(even) {
@@ -138,6 +249,16 @@
             position: relative;
         }
 
+        .timeline-content h3 {
+            color: #FF6B35;
+            margin-bottom: 10px;
+        }
+
+        .timeline-content p {
+            color: #cccccc;
+            margin: 0;
+        }
+
         .timeline-year {
             position: absolute;
             left: 50%;
@@ -148,39 +269,8 @@
             border-radius: 25px;
             font-weight: bold;
             z-index: 2;
-        }
-
-        /* Helicopter Comparison Tool */
-        .comparison-tool {
-            padding: 80px 0;
-            background: #1a1a1a;
-        }
-
-        .comparison-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 50px;
-        }
-
-        .comparison-card {
-            background: #333333;
-            border-radius: 15px;
-            padding: 25px;
-            border: 1px solid rgba(255, 107, 53, 0.2);
+            min-width: 80px;
             text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .comparison-card:hover {
-            border-color: #FF6B35;
-            box-shadow: 0 10px 25px rgba(255, 107, 53, 0.2);
-        }
-
-        .comparison-card.selected {
-            border-color: #FF6B35;
-            background: rgba(255, 107, 53, 0.1);
         }
 
         /* Featured Collections */
@@ -217,6 +307,7 @@
             height: 100%;
             background-size: cover;
             background-position: center;
+            background-color: #444444; /* Fallback color */
             transition: transform 0.5s ease;
         }
 
@@ -275,12 +366,75 @@
             max-width: 600px;
             margin: 0 auto;
         }
+
+        /* 🔧 FIXED: Mobile Responsive Improvements */
+        @media (max-width: 768px) {
+            .education-hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline-content {
+                margin: 0 15px;
+            }
+
+            .timeline-year {
+                position: relative;
+                left: auto;
+                transform: none;
+                margin-bottom: 15px;
+                display: inline-block;
+            }
+
+            .timeline-item {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .timeline-item:nth-child(even) {
+                flex-direction: column;
+            }
+
+            .collection-stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .collections-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 🔧 FIXED: Debugging styles - remove after fixing */
+        .debug-section {
+            background: #ff0000 !important;
+            min-height: 200px;
+            border: 2px solid #00ff00;
+        }
     </style>
 </head>
 
 <body>
-    <!-- Include Header -->
-    <?php include '../includes/header.php'; ?>
+    <!-- 🔧 DEBUGGING: Simplified header for testing -->
+    <header style="position: fixed; top: 0; width: 100%; background: #2a2a2a; padding: 15px 0; z-index: 1000;">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="color: #FF6B35; font-size: 1.5rem; font-weight: bold;">
+                    <i class="fas fa-helicopter"></i> AeroVance
+                </div>
+                <nav style="display: flex; gap: 20px;">
+                    <a href="/" style="color: #cccccc; text-decoration: none;">Home</a>
+                    <a href="/helicopters" style="color: #FF6B35; text-decoration: none;">Helicopters</a>
+                    <a href="/category/personal" style="color: #cccccc; text-decoration: none;">Personal</a>
+                    <a href="/category/business" style="color: #cccccc; text-decoration: none;">Business</a>
+                    <a href="/category/emergency" style="color: #cccccc; text-decoration: none;">Emergency</a>
+                </nav>
+            </div>
+        </div>
+    </header>
 
     <!-- Education Hero Section -->
     <section class="education-hero">
@@ -311,7 +465,7 @@
 
             <div class="modules-grid">
                 <!-- Module 1: Basics -->
-                <div class="learning-module" data-aos="fade-up">
+                <div class="learning-module">
                     <div class="module-icon">
                         <i class="fas fa-helicopter"></i>
                     </div>
@@ -326,13 +480,13 @@
                         </div>
                         <span class="progress-text">0% Complete</span>
                     </div>
-                    <a href="#" class="btn btn-primary" onclick="startModule('fundamentals')">
+                    <button class="btn btn-primary" onclick="startModule('fundamentals')">
                         <i class="fas fa-play"></i> Start Module
-                    </a>
+                    </button>
                 </div>
 
                 <!-- Module 2: Types -->
-                <div class="learning-module" data-aos="fade-up" data-aos-delay="100">
+                <div class="learning-module">
                     <div class="module-icon">
                         <i class="fas fa-layer-group"></i>
                     </div>
@@ -347,13 +501,13 @@
                         </div>
                         <span class="progress-text">0% Complete</span>
                     </div>
-                    <a href="#" class="btn btn-primary" onclick="startModule('categories')">
+                    <button class="btn btn-primary" onclick="startModule('categories')">
                         <i class="fas fa-play"></i> Start Module
-                    </a>
+                    </button>
                 </div>
 
                 <!-- Module 3: Operations -->
-                <div class="learning-module" data-aos="fade-up" data-aos-delay="200">
+                <div class="learning-module">
                     <div class="module-icon">
                         <i class="fas fa-cogs"></i>
                     </div>
@@ -368,13 +522,13 @@
                         </div>
                         <span class="progress-text">0% Complete</span>
                     </div>
-                    <a href="#" class="btn btn-primary" onclick="startModule('operations')">
+                    <button class="btn btn-primary" onclick="startModule('operations')">
                         <i class="fas fa-play"></i> Start Module
-                    </a>
+                    </button>
                 </div>
 
                 <!-- Module 4: Maintenance -->
-                <div class="learning-module" data-aos="fade-up" data-aos-delay="300">
+                <div class="learning-module">
                     <div class="module-icon">
                         <i class="fas fa-wrench"></i>
                     </div>
@@ -389,9 +543,9 @@
                         </div>
                         <span class="progress-text">0% Complete</span>
                     </div>
-                    <a href="#" class="btn btn-primary" onclick="startModule('maintenance')">
+                    <button class="btn btn-primary" onclick="startModule('maintenance')">
                         <i class="fas fa-play"></i> Start Module
-                    </a>
+                    </button>
                 </div>
             </div>
         </div>
@@ -454,7 +608,7 @@
             <div class="collections-grid">
                 <!-- Personal Collection -->
                 <div class="collection-card" onclick="window.location.href='/category/personal'">
-                    <div class="collection-background" style="background-image: url('/assets/images/personal-helicopter.jpg');"></div>
+                    <div class="collection-background" style="background-color: #4CAF50;"></div>
                     <div class="collection-overlay">
                         <h3 style="font-size: 2rem; margin-bottom: 15px;">Personal Aviation</h3>
                         <p style="font-size: 1.1rem; margin-bottom: 20px;">Experience the freedom of private flight</p>
@@ -476,7 +630,7 @@
 
                 <!-- Business Collection -->
                 <div class="collection-card" onclick="window.location.href='/category/business'">
-                    <div class="collection-background" style="background-image: url('/assets/images/business-helicopter.jpg');"></div>
+                    <div class="collection-background" style="background-color: #2196F3;"></div>
                     <div class="collection-overlay">
                         <h3 style="font-size: 2rem; margin-bottom: 15px;">Business Solutions</h3>
                         <p style="font-size: 1.1rem; margin-bottom: 20px;">Elevate your corporate operations</p>
@@ -498,7 +652,7 @@
 
                 <!-- Emergency Collection -->
                 <div class="collection-card" onclick="window.location.href='/category/emergency'">
-                    <div class="collection-background" style="background-image: url('/assets/images/emergency-helicopter.jpg');"></div>
+                    <div class="collection-background" style="background-color: #f44336;"></div>
                     <div class="collection-overlay">
                         <h3 style="font-size: 2rem; margin-bottom: 15px;">Emergency Services</h3>
                         <p style="font-size: 1.1rem; margin-bottom: 20px;">Mission-critical aircraft solutions</p>
@@ -542,20 +696,58 @@
         </div>
     </section>
 
-    <!-- Include Footer -->
-    <?php include '../includes/footer.php'; ?>
+    <!-- Simple Footer -->
+    <footer style="background: #0d0d0d; padding: 40px 0; text-align: center; color: #cccccc;">
+        <div class="container">
+            <p>&copy; 2025 AeroVance. All rights reserved.</p>
+        </div>
+    </footer>
 
     <script>
+        // 🔧 FIXED: Improved notification system
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#28a745' : '#17a2b8'};
+                color: white;
+                padding: 15px 20px;
+                border-radius: 5px;
+                z-index: 10000;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 10);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
         // Learning module functionality
         function startModule(moduleType) {
-            // Store user progress (in a real app, this would be saved to database)
+            console.log(`Starting module: ${moduleType}`);
+            
+            // Store user progress
             localStorage.setItem(`module_${moduleType}_started`, 'true');
             
             // Show notification
             showNotification(`Starting ${moduleType} module...`, 'success');
-            
-            // In a real application, this would redirect to the learning module
-            console.log(`Starting module: ${moduleType}`);
             
             // Simulate progress update
             setTimeout(() => {
@@ -569,7 +761,7 @@
             const moduleNames = ['fundamentals', 'categories', 'operations', 'maintenance'];
             const moduleIndex = moduleNames.indexOf(moduleType);
             
-            if (moduleIndex !== -1) {
+            if (moduleIndex !== -1 && moduleElements[moduleIndex]) {
                 const module = moduleElements[moduleIndex];
                 const progressFill = module.querySelector('.progress-fill');
                 const progressText = module.querySelector('.progress-text');
@@ -583,23 +775,16 @@
 
         // Load saved progress on page load
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚁 General Helicopters page loading...');
+            
             // Check for saved progress
             const moduleNames = ['fundamentals', 'categories', 'operations', 'maintenance'];
             moduleNames.forEach(moduleName => {
                 if (localStorage.getItem(`module_${moduleName}_started`)) {
-                    // Simulate some progress for demo
                     const progress = Math.floor(Math.random() * 100);
                     updateModuleProgress(moduleName, progress);
                 }
             });
-
-            // Initialize scroll animations
-            if (typeof AOS !== 'undefined') {
-                AOS.init({
-                    duration: 800,
-                    once: true
-                });
-            }
 
             console.log('✅ General Helicopters page loaded successfully');
         });

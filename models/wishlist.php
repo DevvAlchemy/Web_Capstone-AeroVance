@@ -1,12 +1,6 @@
 <?php
 /**
- * WISHLIST PAGE - Following Your Successful Pattern
- * 
- * STUDENT NOTES:
- * - Uses your exact same structure from dashboard.php
- * - Same authentication pattern
- * - Same database connection approach
- * - Ready for React migration with data-component attributes
+ * WISHLIST PAGE 
  */
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/helicopter-marketplace/config/config.php';

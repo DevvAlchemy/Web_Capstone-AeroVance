@@ -601,7 +601,7 @@ try {
                         <div class="model-price" style="font-size: 1.5rem; color: #FF6B35; font-weight: bold; margin-bottom: 15px;">
                             Starting at $505,000
                         </div>
-                        <a href="/helicopter/1" class="btn btn-primary btn-full">
+                        <a href="/assets/images/helicopter-robinson-r44.jpg" class="btn btn-primary btn-full">
                             <i class="fas fa-eye"></i> View Details
                         </a>
                     </div>

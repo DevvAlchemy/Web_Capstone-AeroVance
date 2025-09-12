@@ -9,10 +9,12 @@
             <div class="footer-section">
                 <h4>Quick Links</h4>
                 <ul>
-                    <li><a href="/helicopters">Browse Helicopters</a></li>
-                    <li><a href="/category/personal">Personal Aircraft</a></li>
-                    <li><a href="/category/business">Business Solutions</a></li>
-                    <li><a href="/category/emergency">Emergency Services</a></li>
+                    <li><a href="/helicopter-marketplace/views/catalog.php">Browse Helicopters</a></li>
+                    <li><a href="/helicopter-marketplace/views/business-helicopters.php">Business Solutions</a></li>
+                    <li><a href="/helicopter-marketplace/views/personal-helicopters.php">Personal Aircraft</a></li>
+                    <li><a href="/helicopter-marketplace/views/emergency-helicopters.php">Emergency Services</a></li>
+                    <li><a href="/helicopter-marketplace/views/contact.php">Contact Us</a></li>
+                    <li><a href="/helicopter-marketplace/views/about.php">About Us</a></li>
                 </ul>
             </div>
             

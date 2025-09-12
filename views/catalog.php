@@ -322,11 +322,10 @@ try {
                 <div class="footer-section">
                     <h4>Aircraft Categories</h4>
                     <ul>
-                        <li><a href="/category/personal">Personal Use</a></li>
-                        <li><a href="/category/business">Business Aviation</a></li>
-                        <li><a href="/category/emergency">Emergency Services</a></li>
-                    </ul>
-                </div>
+                        <li><a href="/helicopter-marketplace/views/personal-helicopters.php">Personal Aircraft</a></li>
+                        <li><a href="/helicopter-marketplace/views/business-helicopters.php">Business Solutions</a></li>
+                        <li><a href="/helicopter-marketplace/views/emergency-helicopters.php">Emergency Services</a></li>
+              </div>
                 
                 <div class="footer-section">
                     <h4>Support</h4>

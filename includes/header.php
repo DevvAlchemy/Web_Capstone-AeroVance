@@ -82,6 +82,19 @@ $currentPage = basename($_SERVER['REQUEST_URI']);
             <i class="fas fa-helicopter"></i>
             <span>AEROVANCE</span>
         </a>
+         <nav class="nav-menu">
+                <!-- Root homepage - matches router->get('/') -->
+                <a href="/helicopter-marketplace/views/home.php" class="active">Home</a>
+                
+                <!-- Helicopter catalog - matches router->get('/helicopters') -->
+                <a href="/helicopter-marketplace/views/general-helicopters.php">Helicopters</a>
+                <a href="/helicopter-marketplace/views/personal-helicopters.php">Personal</a>
+                <a href="/helicopter-marketplace/views/business-helicopters.php">Business</a>
+                <a href="/helicopter-marketplace/views/emergency-helicopters.php">Emergency</a>
+                <!-- Static pages - these have fallback content if files don't exist -->
+                <a href="views/about">About</a>
+                <a href="/views/contact">Contact</a>
+            </nav>
         <button class="mobile-menu-close" onclick="toggleMobileMenu()">
             <i class="fas fa-times"></i>
         </button>

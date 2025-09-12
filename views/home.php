@@ -1,3 +1,4 @@
+//views/home.php 
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,25 +19,28 @@
     <!-- Header -->
     <header class="header" id="header">
         <div class="nav-container">
-            <a href="/" class="logo">
+            <a href="/helicopter-marketplace/views/home.php" class="logo">
                 <i class="fas fa-helicopter"></i>
                 <span>AeroVance</span>
             </a>
             
-            <nav class="nav-menu">
-                <a href="/" class="active">Home</a>
-                <a href="/helicopters">Helicopters</a>
-                <a href="/category/personal">Personal</a>
-                <a href="/category/business">Business</a>
-                <a href="/category/emergency">Emergency</a>
-                <a href="/about">About</a>
-                <a href="/contact">Contact</a>
-            </nav>
-            
-            <div class="auth-buttons">
-                <a href="/login" class="btn btn-outline">Login</a>
-                <a href="/register" class="btn btn-primary">Sign Up</a>
-            </div>
+     <nav class="nav-menu">
+
+    <a href="/helicopter-marketplace/" class="active">Home</a>
+    
+    <a href="/helicopter-marketplace/views/catalog.php">Helicopters</a>
+    <a href="/helicopter-marketplace/views/personal-helicopters.php">Personal</a>
+    <a href="/helicopter-marketplace/views/business-helicopters.php">Business</a>
+    <a href="/helicopter-marketplace/views/emergency-helicopters.php">Emergency</a>
+    <a href="/helicopter-marketplace/views/about.php">About</a>
+    <a href="/helicopter-marketplace/views/contact.php">Contact</a>
+</nav>
+
+<div class="auth-buttons">
+    <a href="/helicopter-marketplace/views/auth/login.php" class="btn btn-outline">Login</a>
+    <a href="/helicopter-marketplace/views/auth/register.php" class="btn btn-primary">Sign Up</a>
+</div>
+
         </div>
     </header>
 
@@ -53,6 +57,7 @@
             <p>Pioneering advanced aerial solutions, from state-of-the-art helicopters to cutting-edge drones. We bring the future of flight to every mission.</p>
             
             <div class="hero-buttons">
+                <!-- FIXED: Button links match router routes -->
                 <a href="/helicopters" class="btn btn-primary btn-large">Browse Helicopters</a>
                 <a href="#features" class="btn btn-outline btn-large">Learn More</a>
             </div>
@@ -74,6 +79,7 @@
                     </div>
                     <h3>Personal Aviation</h3>
                     <p>Learn to maintain your flying bird to become a confident soaring enthusiast. From private helicopters to recreational aircraft, experience the freedom of personal flight.</p>
+                    <!-- FIXED: Link matches router route -->
                     <a href="/category/personal" class="btn btn-primary" style="margin-top: 20px;">Learn more</a>
                 </div>
                 
@@ -83,6 +89,7 @@
                     </div>
                     <h3>Business Solutions</h3>
                     <p>Learn from the best Pilots while Piloting the best aeronautics. Complete machinery training for corporate and commercial aviation needs.</p>
+                    <!-- FIXED: Link matches router route -->
                     <a href="/category/business" class="btn btn-primary" style="margin-top: 20px;">Learn more</a>
                 </div>
                 
@@ -92,6 +99,7 @@
                     </div>
                     <h3>Emergency Services</h3>
                     <p>Test out any of our machinery to determine your perfect Aircraft. Virtual test flight experience for emergency and rescue operations.</p>
+                    <!-- FIXED: Link matches router route -->
                     <a href="/category/emergency" class="btn btn-primary" style="margin-top: 20px;">Learn more</a>
                 </div>
             </div>
@@ -107,6 +115,7 @@
             </div>
             
             <div class="categories-grid">
+                <!-- FIXED: All category links match router routes -->
                 <a href="/category/personal" class="category-card fade-in" data-aos="fade-right">
                     <div class="category-image" style="background-image: url('/assets/images/personal-helicopter.jpg');">
                         <div class="category-overlay">
@@ -148,7 +157,9 @@
             <div class="helicopters-grid">
                 <!-- Demo Helicopter 1 -->
                 <div class="helicopter-card fade-in" data-aos="fade-up">
-                    <div class="helicopter-image" style="background-image: url('/assets/images/helicopters/r44-raven-1.jpg');">
+                    <div class="helicopter-image" style="background-image: url('/assets/images/helicopter-robinson-r44.jpg');">
+                        <img src="/assets/images/helicopter-robinson-r44.jpg
+                        " alt="">
                         <div class="price-tag">$505,000</div>
                     </div>
                     <div class="helicopter-info">
@@ -171,6 +182,7 @@
                         </div>
                         
                         <div class="helicopter-actions">
+                            <!-- FIXED: Helicopter detail link matches router route pattern -->
                             <a href="/helicopter/1" class="btn btn-primary btn-full">
                                 <i class="fas fa-eye"></i> View Details
                             </a>
@@ -295,10 +307,10 @@
                 <div class="footer-section">
                     <h4>Quick Links</h4>
                     <ul>
-                        <li><a href="/helicopters">Browse Helicopters</a></li>
-                        <li><a href="/category/personal">Personal Aircraft</a></li>
-                        <li><a href="/category/business">Business Solutions</a></li>
-                        <li><a href="/category/emergency">Emergency Services</a></li>
+                        <li><a href="/helicopter-marketplace/views/catalog.php">Browse Helicopters</a></li>
+                        <li><a href="/helicopter-marketplace/views/personal-helicopters.php">Personal Aircraft</a></li>
+                        <li><a href="/helicopter-marketplace/views/business-helicopters.php">Business Solutions</a></li>
+                        <li><a href="/helicopter-marketplace/views/emergency-helicopters.php">Emergency Services</a></li>
                     </ul>
                 </div>
                 
@@ -355,7 +367,7 @@
             offset: 100
         });
 
-        // Header scroll effect
+        // Header scroll effect - adds visual feedback when scrolling
         window.addEventListener('scroll', () => {
             const header = document.getElementById('header');
             if (window.scrollY > 100) {
@@ -365,7 +377,7 @@
             }
         });
 
-        // Scroll progress indicator
+        // Scroll progress indicator - shows page scroll progress
         window.addEventListener('scroll', () => {
             const scrollTop = document.documentElement.scrollTop;
             const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
@@ -377,7 +389,7 @@
             }
         });
 
-        // Smooth scrolling for anchor links
+        // Smooth scrolling for anchor links - better UX for internal navigation
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -391,10 +403,11 @@
             });
         });
 
-        // Fade in animation on scroll
+        // Intersection Observer for fade-in animations
+        // This creates a more modern approach to scroll animations
         const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
+            threshold: 0.1, // Trigger when 10% of element is visible
+            rootMargin: '0px 0px -50px 0px' // Start animation 50px before element enters viewport
         };
 
         const observer = new IntersectionObserver((entries) => {
@@ -405,10 +418,12 @@
             });
         }, observerOptions);
 
+        // Apply observer to all fade-in elements
         document.querySelectorAll('.fade-in').forEach(el => {
             observer.observe(el);
         });
 
+        // Success message for debugging
         console.log('✅ AeroVance loaded successfully');
     </script>
 </body>

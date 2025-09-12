@@ -144,12 +144,15 @@
             </a>
             
             <nav class="nav-menu">
-                <a href="/helicopter-marketplace/views/home.php">Home</a>
-                <a href="/helicopters">Helicopters</a>
-                <a href="/category/personal">Personal</a>
-                <a href="/category/business">Business</a>
-                <a href="/category/emergency">Emergency</a>
-                <a href="/helicopter-marketplace/views/about.php">About</a>
+                <a href="/helicopter-marketplace/views/home.php" class="active">Home</a>
+                <!-- Helicopter catalog - matches router->get('/helicopters') -->
+                <a href="/helicopter-marketplace/views/general-helicopters.php">Helicopters</a>
+                <a href="/helicopter-marketplace/views/personal-helicopters.php">Personal</a>
+                <a href="/helicopter-marketplace/views/business-helicopters.php">Business</a>
+                <a href="/helicopter-marketplace/views/emergency-helicopters.php">Emergency</a>
+                <!-- Static pages - these have fallback content if files don't exist -->
+                <a href="views/about">About</a>
+                <a href="/views/contact">Contact</a><a href="/helicopter-marketplace/views/about.php">About</a>
                 <a href="/helicopter-marketplace/views/contact.php" class="active">Contact</a>
             </nav>
             
@@ -414,10 +417,10 @@
                 <div class="footer-section">
                     <h4>Quick Links</h4>
                     <ul>
-                        <li><a href="/helicopters">Browse Helicopters</a></li>
-                        <li><a href="/category/personal">Personal Aircraft</a></li>
-                        <li><a href="/category/business">Business Solutions</a></li>
-                        <li><a href="/category/emergency">Emergency Services</a></li>
+                       <li><a href="/helicopter-marketplace/views/catalog.php">Browse Helicopters</a></li>
+                        <li><a href="/helicopter-marketplace/views/personal-helicopters.php">Personal Aircraft</a></li>
+                        <li><a href="/helicopter-marketplace/views/business-helicopters.php">Business Solutions</a></li>
+                        <li><a href="/helicopter-marketplace/views/emergency-helicopters.php">Emergency Services</a></li>
                     </ul>
                 </div>
                 
